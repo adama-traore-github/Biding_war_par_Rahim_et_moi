@@ -86,6 +86,11 @@ Les utilisateurs avec le même rôle peuvent interagir dans cette FAQ pour poser
 
 Le projet utilise un script JavaScript pour gérer le compte à rebours des enchères. Lorsqu'une enchère se termine, un message "Enchère terminée" s'affiche, et l'utilisateur est redirigé vers l'historique des produits après 1 seconde.
 
+## Liens
+
+Notre liens Trello: https://trello.com/w/espacedetravailuser02049505
+Notre Diagramme : /home/ouedraogo/Biding_war_par_Rahim_et_moi/Diagramme.drawio
+Notre ancien Repos mentionner dans /Docs/modification.md/ : https://github.com/adama-traore-github/Biding_war.git
 ## Contribution
 
 Les contributions sont les bienvenues ! Ouvrez une pull request ou soumettez un problème via GitHub.
