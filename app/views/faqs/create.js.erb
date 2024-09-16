@@ -1,0 +1,3 @@
+// Ajoute la nouvelle question à la liste des FAQ sans recharger la page
+$(".container").prepend("<%= j(render @faq) %>");
+$("textarea").val(""); // Vide le champ de question

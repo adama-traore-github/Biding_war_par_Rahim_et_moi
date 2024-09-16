@@ -1,0 +1,22 @@
+<h1><%= @faq.question %></h1>
+<p><%= @faq.answer %></p>
+
+<h2>Réponses</h2>
+<% @faq.responses.each do |response| %>
+  <div class="response">
+    <strong>Réponse de <%= response.user.email %>:</strong>
+    <p><%= response.answer %></p>
+  </div>
+<% end %>
+
+<h2>Ajouter une réponse</h2>
+<%= form_with(model: [@faq, Faq.new], url: create_response_faq_path(@faq), local: true) do |form| %>
+  <div class="field">
+    <%= form.label :answer %>
+    <%= form.text_area :answer %>
+  </div>
+
+  <div class="actions">
+    <%= form.submit 'Ajouter Réponse' %>
+  </div>
+<% end %>

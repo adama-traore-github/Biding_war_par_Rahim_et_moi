@@ -1,0 +1,55 @@
+<div class="container mt-5">
+  <h1 class="text-center mb-4">FAQ pour les Vendeurs</h1>
+
+  <% @faqs.each do |faq| %>
+    <div class="card mb-3">
+      <div class="card-body">
+        <p class="card-text">
+          <strong>Question:</strong> <%= faq.question %>
+          <% if faq.user == current_user %>
+            <em class="text-muted">(par moi)</em>
+          <% else %>
+            <em class="text-muted">(par <%= faq.user.name %>)</em>
+          <% end %>
+        </p>
+
+        <% if faq.answer.present? %>
+          <div class="alert alert-success">
+            <p class="mb-0">
+              <strong>Réponse:</strong> <%= faq.answer %>
+              <!-- Aucune mention de l'auteur de la réponse -->
+            </p>
+          </div>
+        <% else %>
+          <p class="text-warning"><em>Pas encore de réponse.</em></p>
+          <%= form_with(model: faq, local: true, method: :patch) do |form| %>
+            <div class="form-group">
+              <%= form.label :answer, "Votre réponse" %>
+              <%= form.text_area :answer, class: "form-control", rows: 3 %>
+            </div>
+            <div class="form-group text-right">
+              <%= form.submit "Répondre", class: "btn btn-primary" %>
+            </div>
+          <% end %>
+        <% end %>
+      </div>
+    </div>
+  <% end %>
+
+  <div class="card mt-5">
+    <div class="card-header">
+      <h2>Poser une nouvelle question</h2>
+    </div>
+    <div class="card-body">
+      <%= form_with(model: @faq, local: true) do |form| %>
+        <div class="form-group">
+          <%= form.label :question, "Votre question" %>
+          <%= form.text_area :question, class: "form-control", rows: 3, placeholder: "Écrivez votre question ici..." %>
+        </div>
+        <div class="form-group text-right">
+          <%= form.submit "Poser la question", class: "btn btn-success" %>
+        </div>
+      <% end %>
+    </div>
+  </div>
+</div>

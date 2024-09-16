@@ -1,0 +1,15 @@
+# Read about fixtures at https://api.rubyonrails.org/classes/ActiveRecord/FixtureSet.html
+
+one:
+  user_id: 1
+  message: MyText
+  notification_type: MyString
+  notification_date: 2024-08-31 03:01:58
+  viewed: false
+
+two:
+  user_id: 1
+  message: MyText
+  notification_type: MyString
+  notification_date: 2024-08-31 03:01:58
+  viewed: false

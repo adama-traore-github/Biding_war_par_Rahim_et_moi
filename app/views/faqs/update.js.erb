@@ -1,0 +1,2 @@
+// Met à jour la réponse de la FAQ sans recharger la page
+$("#faq_<%= @faq.id %> .alert").html("<%= j(render partial: 'faq_answer', locals: { faq: @faq }) %>");

@@ -1,0 +1,125 @@
+<h1 class="text-center my-4">Créer un Nouveau Produit</h1>
+
+<div class="container">
+  <div class="row justify-content-center">
+    <div class="col-lg-8 col-md-10">
+      <div class="card border-0 shadow-lg rounded-lg">
+        <div class="card-header bg-primary text-white">
+          <h4 class="mb-0">Formulaire de Création de Produit</h4>
+        </div>
+        <div class="card-body">
+          <!-- Formulaire pour créer un nouveau produit -->
+          <%= form_with(model: @product, local: true, html: { multipart: true }) do |f| %>
+
+            <!-- Nom du produit (Obligatoire) -->
+            <div class="form-group mb-4">
+              <%= f.label :name, 'Nom du produit', class: 'form-label font-weight-bold' %>
+              <%= f.text_field :name, class: 'form-control border-primary', placeholder: 'Entrez le nom du produit', required: true %>
+            </div>
+
+            <!-- Description du produit (Obligatoire) -->
+            <div class="form-group mb-4">
+              <%= f.label :description, 'Description', class: 'form-label font-weight-bold' %>
+              <%= f.text_area :description, class: 'form-control border-primary', placeholder: 'Décrivez le produit', rows: 5, required: true %>
+            </div>
+
+            <!-- Catégorie (Obligatoire) -->
+            <div class="form-group mb-4">
+              <%= f.label :category_id, 'Catégorie', class: 'form-label font-weight-bold' %>
+              <%= f.select :category_id, options_for_select(Category.all.map { |c| [c.name, c.id] }, @product.category_id), { prompt: 'Choisir une catégorie' }, class: 'form-control border-primary', required: true %>
+            </div>
+
+            <!-- Prix initial (Obligatoire) -->
+            <div class="form-group mb-4">
+              <%= f.label :initial_price, 'Prix ($)', class: 'form-label font-weight-bold' %>
+              <%= f.number_field :initial_price, class: 'form-control border-primary', placeholder: 'Entrez le prix en dollars', min: 1, required: true %>
+            </div>
+
+            <!-- Date de début de l'enchère (Obligatoire) -->
+            <div class="form-group mb-4">
+              <%= f.label :auction_start_date, 'Date de début de l\'enchère', class: 'form-label font-weight-bold' %>
+              <%= f.datetime_select :auction_start_date, class: 'form-control border-primary', required: true %>
+            </div>
+
+            <!-- Date de fin de l'enchère (Obligatoire) -->
+            <div class="form-group mb-4">
+              <%= f.label :auction_end_date, 'Date de fin de l\'enchère', class: 'form-label font-weight-bold' %>
+              <%= f.datetime_select :auction_end_date, class: 'form-control border-primary', required: true %>
+            </div>
+
+            <!-- Upload d'image (Obligatoire) -->
+            <div class="form-group mb-4">
+              <%= f.label :image, 'Image du produit', class: 'form-label font-weight-bold' %>
+              <%= f.file_field :image, class: 'form-control border-primary', required: true %>
+            </div>
+
+            <!-- Boutons de soumission et retour -->
+            <div class="form-group mb-4 d-flex justify-content-between">
+              <%= link_to 'Retour', products_path, class: 'btn btn-secondary' %>
+              <%= f.submit 'Créer le produit', class: 'btn btn-primary btn-lg px-5' %>
+            </div>
+
+          <% end %>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Styles CSS pour personnaliser le formulaire et le design général -->
+<style>
+body {
+  background: linear-gradient(135deg, #f0f4f8, #d9e2ec); /* Dégradé de fond animé */
+  animation: backgroundAnimation 15s infinite alternate; /* Animation de fond */
+  margin: 0;
+  padding: 0;
+}
+
+@keyframes backgroundAnimation {
+  0% { background-position: 0% 0%; }
+  100% { background-position: 100% 100%; }
+}
+
+.card {
+  background: #ffffff; /* Fond blanc pour la carte */
+  border-radius: 15px; /* Coins arrondis pour la carte */
+}
+
+.card-header {
+  border-radius: 15px 15px 0 0; /* Coins arrondis en haut */
+}
+
+.card-body {
+  padding: 2rem; /* Espacement interne plus généreux */
+}
+
+.form-label {
+  color: #333; /* Couleur des étiquettes */
+}
+
+.form-control {
+  border-radius: 10px; /* Coins arrondis pour les champs de formulaire */
+}
+
+.btn-primary {
+  background-color: #007bff; /* Couleur primaire personnalisée */
+  border-color: #007bff; /* Couleur de bordure personnalisée */
+  border-radius: 10px; /* Coins arrondis pour les boutons */
+}
+
+.btn-secondary {
+  border-radius: 10px; /* Coins arrondis pour les boutons secondaires */
+}
+
+.text-center {
+  text-align: center; /* Alignement centré pour le texte */
+}
+
+.shadow-lg {
+  box-shadow: 0 4px 6px rgba(0,0,0,0.1); /* Ombre plus marquée pour un effet de profondeur */
+}
+
+.border-primary {
+  border-color: #007bff; /* Bordure personnalisée */
+}
+</style>

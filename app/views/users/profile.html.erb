@@ -1,0 +1,97 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Profil Utilisateur</title>
+  <!-- Ajoutez Bootstrap CSS -->
+  <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+  <%= stylesheet_link_tag 'application', media: 'all', 'data-turbolinks-track': 'reload' %>
+  <style>
+    /* Ajoutez des styles personnalisés */
+    .edit-form-container {
+      margin-top: 20px;
+      padding: 15px;
+      border-top: 1px solid #e0e0e0;
+    }
+    .card-header {
+      background-color: #f8f9fa;
+      border-bottom: 1px solid #e0e0e0;
+    }
+    .card-title {
+      margin-bottom: 0;
+    }
+    .form-label {
+      font-weight: bold;
+    }
+  </style>
+</head>
+<body>
+  <div class="container mt-4">
+    <h1 class="mb-4">Profil de <%= @user.name %></h1>
+
+    <!-- Affichage des informations -->
+    <div class="card">
+      <div class="card-header">
+        <h5 class="card-title">Informations</h5>
+      </div>
+      <div class="card-body">
+        <p class="card-text"><strong>Email:</strong> <%= @user.email %></p>
+        <p class="card-text"><strong>Nom:</strong> <%= @user.name %></p>
+
+        <!-- Affichage des informations supplémentaires en fonction du rôle -->
+        <% if @user.seller? %>
+          <p class="card-text"><strong>Nombre de produits:</strong> <%= @user.products.count %></p>
+          <a class="btn btn-primary" href="<%= user_products_path %>">Voir mes produits</a>
+        <% elsif @user.buyer? %>
+          <p class="card-text"><strong>Nombre d'achats:</strong> <%= @user.bids.count %></p>
+        <% elsif @user.both? %>
+          <p class="card-text"><strong>Nombre de produits:</strong> <%= @user.products.count %></p>
+          <p class="card-text"><strong>Nombre d'achats:</strong> <%= @user.bids.count %></p>
+          <a class="btn btn-primary" href="<%= user_products_path %>">Voir mes produits</a>
+        <% end %>
+
+        <!-- Bouton pour afficher/masquer le formulaire de modification -->
+        <button class="btn btn-primary" id="editButton" type="button" aria-expanded="false">
+          Modifier mes informations
+        </button>
+
+        <!-- Formulaire d'édition -->
+        <div id="editForm" class="collapse edit-form-container">
+          <%= form_with model: @user, url: user_profile_path(@user), method: :patch, local: true do |form| %>
+            <div class="form-group">
+              <%= form.label :name, "Nom", class: 'form-label' %>
+              <%= form.text_field :name, class: 'form-control' %>
+            </div>
+            <div class="form-group">
+              <%= form.label :email, "Email", class: 'form-label' %>
+              <%= form.email_field :email, class: 'form-control' %>
+            </div>
+            <div class="form-group">
+              <%= form.submit 'Enregistrer les modifications', class: 'btn btn-success btn-block' %>
+            </div>
+          <% end %>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Ajoutez Bootstrap JS -->
+  <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.5.4/dist/umd/popper.min.js"></script>
+  <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+
+  <script>
+    document.getElementById('editButton').addEventListener('click', function() {
+      var form = document.getElementById('editForm');
+      var isExpanded = this.getAttribute('aria-expanded') === 'true';
+
+      if (isExpanded) {
+        $(form).collapse('hide');
+        this.setAttribute('aria-expanded', 'false');
+      } else {
+        $(form).collapse('show');
+        this.setAttribute('aria-expanded', 'true');
+      }
+    });
+  </script>
+</body>
+</html>

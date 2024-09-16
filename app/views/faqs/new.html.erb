@@ -1,0 +1,22 @@
+<h1>Créer une FAQ</h1>
+
+<%= form_with(model: @faq, local: true) do |form| %>
+  <div class="field">
+    <%= form.label :question %>
+    <%= form.text_field :question %>
+  </div>
+
+  <div class="field">
+    <%= form.label :answer %>
+    <%= form.text_area :answer %>
+  </div>
+
+  <div class="field">
+    <%= form.label :role %>
+    <%= form.select :role, Faq.roles.keys.map { |r| [r.humanize, r] } %>
+  </div>
+
+  <div class="actions">
+    <%= form.submit 'Créer' %>
+  </div>
+<% end %>

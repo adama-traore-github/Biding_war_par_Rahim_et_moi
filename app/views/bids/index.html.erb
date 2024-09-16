@@ -1,0 +1,93 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Enchères en Cours - BidingWar</title>
+  <%= csrf_meta_tags %> <!-- Tags de sécurité pour les formulaires -->
+  <%= csp_meta_tag %> <!-- Tag de Content Security Policy -->
+  <%= stylesheet_link_tag 'application', media: 'all', 'data-turbolinks-track': 'reload' %> <!-- Lien vers la feuille de style principale -->
+  <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet"> <!-- Lien vers Bootstrap pour le design -->
+</head>
+<body>
+  <div class="container mt-4">
+    <h1 class="mb-4">Enchères en Cours</h1>
+    <div class="row">
+      <% @bids.each do |bid| %> <!-- Boucle pour afficher chaque offre -->
+        <% if bid.product.auction_end_date >= Time.current %> <!-- Vérifie si l'enchère est encore en cours -->
+          <div class="col-md-4 mb-4">
+            <div class="card">
+              <!-- Affiche l'image du produit ou une image par défaut -->
+              <img src="<%= bid.product.image.attached? ? rails_blob_path(bid.product.image, only_path: true) : 'default-image.jpg' %>" class="card-img-top" alt="<%= bid.product.name %>">
+              <div class="card-body">
+                <h5 class="card-title"><%= bid.product.name %></h5>
+                <p class="card-text">Prix actuel : <%= number_to_currency(bid.amount) %></p>
+
+                <!-- Affichage du compteur de temps pour l'enchère -->
+                <p class="text-info" id="countdown-<%= bid.id %>" data-end-time="<%= bid.product.auction_end_date %>"></p>
+
+                <% if current_user&.role == 'seller' %> <!-- Vérifie si l'utilisateur actuel est un vendeur -->
+                  <!-- Bouton pour les vendeurs (Biding War) qui ne redirige pas -->
+                  <button class="btn btn-primary" onclick="return false;">Biding War</button>
+                <% else %>
+                  <!-- Lien pour les autres utilisateurs avec le bouton Enchérir -->
+                  <%= link_to 'Enchérir', new_product_bid_path(bid.product_id), class: 'btn btn-primary', id: "bid-button-#{bid.id}", data: { product_id: bid.product_id } %>
+                <% end %>
+              </div>
+            </div>
+          </div>
+        <% else %>
+          <div class="col-md-4 mb-4">
+            <div class="card">
+              <!-- Affiche l'image du produit ou une image par défaut -->
+              <img src="<%= bid.product.image.attached? ? rails_blob_path(bid.product.image, only_path: true) : 'default-image.jpg' %>" class="card-img-top" alt="<%= bid.product.name %>">
+              <div class="card-body">
+                <h5 class="card-title"><%= bid.product.name %></h5>
+                <p class="card-text">Prix initial : <%= number_to_currency(bid.product.initial_price) %></p>
+                <!-- Indique que l'enchère est terminée -->
+                <p class="card-text text-danger">Enchère terminée</p>
+              </div>
+            </div>
+          </div>
+        <% end %>
+      <% end %>
+    </div>
+  </div>
+
+  <script>
+    document.addEventListener('DOMContentLoaded', function() {
+      // Sélectionne tous les éléments de compte à rebours
+      const countdownElements = document.querySelectorAll('[id^="countdown-"]');
+
+      countdownElements.forEach(element => {
+        const bidId = element.id.split('-')[1]; // Obtient l'ID de l'enchère
+        const bidButton = document.getElementById(`bid-button-${bidId}`);
+        const countdownEnd = new Date(element.getAttribute('data-end-time')); // Obtient la date de fin de l'enchère
+
+        function updateCountdown() {
+          const now = new Date();
+          const timeRemaining = countdownEnd - now; // Calcule le temps restant
+
+          if (timeRemaining <= 0) {
+            element.textContent = "Enchère terminée";
+            if (bidButton) {
+              bidButton.textContent = "Adjugé";
+              bidButton.classList.add('disabled');
+              bidButton.removeAttribute('href');
+            }
+          } else {
+            // Calcule les heures, minutes et secondes restantes
+            const hours = Math.floor(timeRemaining / (1000 * 60 * 60));
+            const minutes = Math.floor((timeRemaining % (1000 * 60 * 60)) / (1000 * 60));
+            const seconds = Math.floor((timeRemaining % (1000 * 60)) / 1000);
+            element.textContent = `${hours}h ${minutes}m ${seconds}s restantes`;
+          }
+        }
+
+        updateCountdown(); // Met à jour le compte à rebours immédiatement
+        setInterval(updateCountdown, 1000); // Met à jour le compte à rebours toutes les secondes
+      });
+    });
+  </script>
+</body>
+</html>

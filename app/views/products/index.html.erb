@@ -1,0 +1,144 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <!-- Meta information -->
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Produits - BidingWar</title>
+  
+  <!-- Rails meta tags for CSRF protection -->
+  <%= csrf_meta_tags %>
+  <%= csp_meta_tag %>
+
+  <!-- Stylesheet links -->
+  <%= stylesheet_link_tag 'application', media: 'all', 'data-turbolinks-track': 'reload' %>
+  <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
+  
+  <!-- JavaScript pack tag for Rails -->
+  <%= javascript_pack_tag 'application', 'data-turbolinks-track': 'reload' %>
+
+  <!-- External libraries: jQuery, Popper.js, Bootstrap JS -->
+  <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.9.3/dist/umd/popper.min.js"></script>
+  <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+
+  <!-- Custom styles for the page -->
+  <style>
+    body {
+      background: #f8f9fa; /* Background color for the whole page */
+    }
+    .card {
+      transition: transform 0.3s ease-in-out, box-shadow 0.3s ease-in-out; /* Card hover animation */
+      border: none;
+      border-radius: 15px; /* Rounded corners for cards */
+    }
+    .card:hover {
+      transform: translateY(-10px); /* Move card up on hover */
+      box-shadow: 0 10px 20px rgba(0, 0, 0, 0.15); /* Shadow effect on hover */
+    }
+    .card-img-top {
+      height: 180px; /* Set image height */
+      object-fit: cover; /* Ensure image covers the entire area */
+      border-top-left-radius: 15px; /* Rounded corners for images */
+      border-top-right-radius: 15px;
+    }
+    .card-body {
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between; /* Ensure content is evenly spaced */
+    }
+    .btn-primary {
+      background-color: #007bff; /* Primary button color */
+      border-color: #007bff;
+      border-radius: 10px; /* Rounded corners for buttons */
+      padding: 10px 15px; /* Button padding */
+    }
+    .btn-primary:hover {
+      background-color: #0056b3; /* Darker color on hover */
+      border-color: #004085;
+    }
+    .card-title {
+      font-size: 1.25rem; /* Font size for card titles */
+      font-weight: bold;
+    }
+    .card-text {
+      font-size: 1rem; /* Font size for regular text */
+      color: #6c757d; /* Muted color for description */
+    }
+    .time-remaining {
+      font-size: 0.9rem;
+      color: #dc3545; /* Red color for urgency */
+      font-weight: bold;
+    }
+    .container {
+      margin-top: 20px; /* Top margin for the container */
+    }
+  </style>
+</head>
+<body>
+  <!-- Main container for the product listing -->
+  <div class="container mt-4">
+    <h1 class="mb-4"></h1> <!-- Page heading (optional) -->
+    <div class="row">
+      <% @products.each do |product| %>
+        <!-- Loop through each product and display it in a card -->
+        <div class="col-md-4 mb-4">
+          <div class="card h-100">
+            <!-- Display product image, or a default image if not available -->
+            <%= image_tag(product.image.attached? ? rails_blob_path(product.image, only_path: true) : 'default-image.jpg', class: 'card-img-top', alt: product.name) %>
+            <div class="card-body">
+              <!-- Product name, description, initial price, and current price -->
+              <h5 class="card-title"><%= product.name %></h5>
+              <p class="card-text"><%= product.description %></p>
+              <p class="card-text">Prix Initial : <%= number_to_currency(product.initial_price) %></p>
+              <p class="card-text">Prix Actuel : <%= number_to_currency(product.current_price) %></p>
+
+              <!-- Show countdown timer if auction end date is available -->
+              <% if product.auction_end_date.present? %>
+                <p class="time-remaining" id="time-remaining-<%= product.id %>"></p>
+              <% end %>
+
+              <!-- Button to place a bid or buy the product -->
+              <a href="<%= new_product_bid_path(product) %>" class="btn btn-primary">Acheter/Enchérir</a>
+            </div>
+          </div>
+        </div>
+      <% end %>
+    </div>
+  </div>
+
+  <!-- JavaScript countdown timer functionality -->
+  <script>
+    document.addEventListener('DOMContentLoaded', function() {
+      const updateCountdown = (endDate, elementId) => {
+        const now = new Date(); /* Current time */
+        const end = new Date(endDate); /* Auction end time */
+        const timeRemaining = end - now; /* Calculate time remaining */
+
+        if (timeRemaining <= 0) {
+          /* If time is up, show 'Enchère terminée' */
+          document.getElementById(elementId).textContent = "Enchère terminée";
+        } else {
+          /* Calculate hours, minutes, and seconds remaining */
+          const hours = Math.floor(timeRemaining / (1000 * 60 * 60));
+          const minutes = Math.floor((timeRemaining % (1000 * 60 * 60)) / (1000 * 60));
+          const seconds = Math.floor((timeRemaining % (1000 * 60)) / 1000);
+          /* Display the countdown in the respective element */
+          document.getElementById(elementId).textContent = 
+            `${hours}h ${minutes}m ${seconds}s restantes`;
+        }
+      };
+
+      /* Loop through each product and set up the countdown timer */
+      <% @products.each do |product| %>
+        <% if product.auction_end_date.present? %>
+          /* Initialize the countdown for each product */
+          updateCountdown("<%= product.auction_end_date.iso8601 %>", "time-remaining-<%= product.id %>");
+          /* Update the countdown every second */
+          setInterval(() => updateCountdown("<%= product.auction_end_date.iso8601 %>", "time-remaining-<%= product.id %>"), 1000);
+        <% end %>
+      <% end %>
+    });
+  </script>
+</body>
+</html>

@@ -1,0 +1,23 @@
+# Read about fixtures at https://api.rubyonrails.org/classes/ActiveRecord/FixtureSet.html
+
+one:
+  name: MyString
+  description: MyText
+  category: MyString
+  initial_price: 9.99
+  current_price: 9.99
+  auction_start_date: 2024-08-31 03:01:50
+  auction_end_date: 2024-08-31 03:01:50
+  image: MyString
+  seller_id: 1
+
+two:
+  name: MyString
+  description: MyText
+  category: MyString
+  initial_price: 9.99
+  current_price: 9.99
+  auction_start_date: 2024-08-31 03:01:50
+  auction_end_date: 2024-08-31 03:01:50
+  image: MyString
+  seller_id: 1

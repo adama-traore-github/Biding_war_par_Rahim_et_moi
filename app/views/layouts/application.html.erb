@@ -1,0 +1,131 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>BidingWar</title>
+    <%= csrf_meta_tags %>
+    <%= csp_meta_tag %>
+
+    <!-- Lien vers les stylesheets incluant Bootstrap -->
+    <%= stylesheet_link_tag 'application', media: 'all', 'data-turbolinks-track': 'reload' %>
+    <!-- Lien CDN pour Bootstrap CSS -->
+    <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css" rel="stylesheet">
+
+    <!-- Style personnalisé -->
+    <style>
+        .navbar-nav.ml-auto {
+            margin-left: auto;
+        }
+    </style>
+</head>
+
+<body>
+    <!-- Navbar -->
+    <nav class="navbar navbar-expand-lg navbar-light bg-light">
+        <a class="navbar-brand animated-title" href="<%= root_path %>">BidingWar</a>
+        <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+            <span class="navbar-toggler-icon"></span>
+        </button>
+
+        <div class="collapse navbar-collapse" id="navbarNav">
+            <!-- Formulaire de recherche conditionnel -->
+            <% unless user_signed_in? && current_user.role == 'seller' %>
+                <form class="form-inline ml-auto my-2 my-lg-0" action="<%= search_products_path %>" method="get">
+                    <input class="form-control mr-sm-2" type="search" placeholder="Rechercher un produit" aria-label="Search" name="query">
+                    <button class="btn btn-outline-success my-2 my-sm-0" type="submit">Rechercher</button>
+                </form>
+            <% end %>
+
+            <!-- Liens de navigation -->
+            <ul class="navbar-nav <%= 'ml-auto' if user_signed_in? && current_user.role == 'seller' %>">
+                <li class="nav-item">
+                    <a class="nav-link" href="<%= root_path %>">Accueil</a>
+                </li>
+                <li class="nav-item">
+                    <!-- Menu déroulant pour les catégories uniquement -->
+                    <% unless user_signed_in? && current_user.role == 'seller' %>
+                        <div class="dropdown">
+                            <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                                Catégories
+                            </a>
+                            <div class="dropdown-menu" aria-labelledby="navbarDropdown">
+                                <% Category::VALID_CATEGORIES.each do |category| %>
+                                    <a class="dropdown-item" href="<%= category_products_path(category) %>"><%= category %></a>
+                                <% end %>
+                            </div>
+                        </div>
+                    <% end %>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="<%= bids_path %>">Enchères en cours</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="<%= historique_products_path %>">Historique des enchères</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="<%= contact_us_path %>">Support technique</a>
+                </li>
+                <% if user_signed_in? %>
+                    <% if current_user.role == 'seller' || current_user.role == 'both' %>
+                        <li class="nav-item">
+                            <a class="nav-link" href="<%= new_product_path %>">Créer une enchère</a>
+                        </li>
+                    <% end %>
+
+                    <% if current_user.role == 'seller' %>
+                        <!-- Ajouter un lien FAQ pour les vendeurs -->
+                        <li class="nav-item">
+                            <a class="nav-link" href="<%= seller_faq_path %>">FAQ Vendeur</a>
+                        </li>
+                    <% elsif current_user.role == 'buyer' %>
+                        <!-- Ajouter un lien FAQ pour les acheteurs -->
+                        <li class="nav-item">
+                            <a class="nav-link" href="<%= buyer_faq_path %>">FAQ Acheteur</a>
+                        </li>
+                    <% elsif current_user.role == 'both' %>
+                        <!-- Ajouter un lien FAQ pour les deux rôles -->
+                        <li class="nav-item">
+                            <a class="nav-link" href="<%= both_faq_path %>">FAQ A/V</a>
+                        </li>
+                    <% end %>
+                <% end %>
+            </ul>
+
+            <!-- Boutons de connexion et inscription ou Profil et Déconnexion -->
+            <ul class="navbar-nav ml-auto">
+                <% if user_signed_in? %>
+                    <li class="nav-item">
+                        <a class="nav-link" href="<%= user_profile_path(current_user) %>">
+                            <i class="fas fa-user"></i> Profil
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <%= button_to destroy_user_session_path, method: :delete, class: "btn btn-outline-danger" do %>
+                            <i class="fas fa-sign-out-alt"></i> Déconnexion
+                        <% end %>
+                    </li>
+                <% else %>
+                    <li class="nav-item">
+                        <a class="btn btn-primary mr-2" href="<%= new_user_session_path %>">Connexion</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="btn btn-secondary" href="<%= new_user_registration_path %>">Inscription</a>
+                    </li>
+                <% end %>
+            </ul>
+        </div>
+    </nav>
+
+    <!-- Contenu principal -->
+    <div class="container mt-4">
+        <%= yield %>
+    </div>
+
+    <!-- JavaScript et jQuery nécessaires pour Bootstrap -->
+    <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.9.2/dist/umd/popper.min.js"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+</body>
+</html>

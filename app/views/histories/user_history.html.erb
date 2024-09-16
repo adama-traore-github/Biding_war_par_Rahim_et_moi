@@ -1,0 +1,24 @@
+<h1>Historique des Enchères</h1>
+
+<% if @histories.any? %>
+  <table>
+    <thead>
+      <tr>
+        <th>Produit</th>
+        <th>Montant de l'Enchère</th>
+        <th>Date de l'Enchère</th>
+      </tr>
+    </thead>
+    <tbody>
+      <% @histories.each do |history| %>
+        <tr>
+          <td><%= history.product.name %></td> <!-- Assurez-vous que la relation avec le produit est bien établie -->
+          <td><%= number_to_currency(history.bid_amount) %></td>
+          <td><%= history.bid_date.strftime("%d/%m/%Y %H:%M") %></td>
+        </tr>
+      <% end %>
+    </tbody>
+  </table>
+<% else %>
+  <p>Aucune enchère trouvée dans l'historique.</p>
+<% end %>

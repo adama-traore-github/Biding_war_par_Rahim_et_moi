@@ -1,0 +1,137 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Résultats de la Recherche</title>
+  <%= csrf_meta_tags %>
+  <%= csp_meta_tag %>
+  <%= stylesheet_link_tag 'application', media: 'all', 'data-turbolinks-track': 'reload' %>
+  <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
+  <%= javascript_pack_tag 'application', 'data-turbolinks-track': 'reload' %>
+  <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.9.3/dist/umd/popper.min.js"></script>
+  <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+  <style>
+    body {
+      background: #f8f9fa;
+    }
+    .card {
+      transition: transform 0.3s ease-in-out, box-shadow 0.3s ease-in-out;
+      border: none;
+      border-radius: 15px;
+    }
+    .card:hover {
+      transform: translateY(-10px);
+      box-shadow: 0 10px 20px rgba(0, 0, 0, 0.15);
+    }
+    .card-img-top {
+      height: 200px;
+      object-fit: cover;
+      border-top-left-radius: 15px;
+      border-top-right-radius: 15px;
+    }
+    .card-body {
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+    }
+    .btn-primary {
+      background-color: #007bff;
+      border-color: #007bff;
+      border-radius: 10px;
+      padding: 10px 15px;
+    }
+    .btn-primary:hover {
+      background-color: #0056b3;
+      border-color: #004085;
+    }
+    .card-title {
+      font-size: 1.25rem;
+      font-weight: bold;
+    }
+    .card-text {
+      font-size: 1rem;
+      color: #6c757d;
+    }
+    .time-remaining {
+      font-size: 0.9rem;
+      color: #dc3545;
+      font-weight: bold;
+    }
+  </style>
+</head>
+<body>
+  <div class="container mt-4">
+    <h1 class="mb-4">Résultats de la Recherche</h1>
+    <div class="row">
+      <% if @products.present? %>
+        <% @products.each do |product| %>
+          <% if product.auction_end_date.present? %>
+            <div class="col-md-4 mb-4">
+              <div class="card h-100">
+                <img src="<%= url_for(product.image) %>" class="card-img-top" alt="<%= product.name %>">
+                <div class="card-body">
+                  <h5 class="card-title"><%= product.name %></h5>
+                  <p class="card-text">Description: <%= product.description %></p>
+                  <p class="card-text">Prix Initial : <%= number_to_currency(product.initial_price) %></p>
+                  <p class="card-text">Prix Actuel : <%= number_to_currency(product.current_price) %></p>
+
+                  <% if product.auction_end_date.present? %>
+                    <p class="time-remaining" id="time-remaining-<%= product.id %>"></p>
+                  <% end %>
+
+                  <% if current_user&.role == 'seller' %>
+                    <button class="btn btn-primary" onclick="return false;">Biding War</button>
+                  <% else %>
+                    <a href="<%= new_product_bid_path(product) %>" class="btn btn-primary">Acheter/Enchérir</a>
+                  <% end %>
+                </div>
+              </div>
+            </div>
+          <% end %>
+        <% end %>
+      <% else %>
+        <p>Aucun produit trouvé pour "<%= @query %>".</p>
+      <% end %>
+    </div>
+  </div>
+
+  <script>
+  document.addEventListener('DOMContentLoaded', function() {
+    const updateCountdown = (endDate, elementId) => {
+      const now = new Date();
+      const end = new Date(endDate);
+
+      const timeRemaining = end - now;
+
+      const element = document.getElementById(elementId);
+      if (!element) {
+        console.error('Element not found:', elementId);
+        return;
+      }
+
+      if (timeRemaining <= 0) {
+        element.textContent = "Enchère terminée";
+        setTimeout(() => {
+          window.location.href = "<%= historique_products_path %>";
+        }, 1000); // Redirection après 1 seconde pour permettre à l'utilisateur de voir le message
+      } else {
+        const hours = Math.floor(timeRemaining / (1000 * 60 * 60));
+        const minutes = Math.floor((timeRemaining % (1000 * 60 * 60)) / (1000 * 60));
+        const seconds = Math.floor((timeRemaining % (1000 * 60)) / 1000);
+        element.textContent = `${hours}h ${minutes}m ${seconds}s restantes`;
+      }
+    };
+
+    // Pour chaque produit, mettre à jour le compte à rebours
+    <% @products.each do |product| %>
+      <% if product.auction_end_date.present? %>
+        updateCountdown("<%= product.auction_end_date.iso8601 %>", "time-remaining-<%= product.id %>");
+        setInterval(() => updateCountdown("<%= product.auction_end_date.iso8601 %>", "time-remaining-<%= product.id %>"), 1000);
+      <% end %>
+    <% end %>
+  });
+  </script>
+</body>
+</html>

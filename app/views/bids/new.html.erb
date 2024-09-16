@@ -1,0 +1,36 @@
+<!-- app/views/bids/new.html.erb -->
+<div class="container mt-5">
+  <div class="row">
+    <!-- Colonne pour les informations sur le produit -->
+    <div class="col-md-6">
+      <h1 class="mb-4">Placer une Enchère</h1>
+
+      <!-- Informations sur le produit -->
+      <div class="card border-primary mb-4 shadow-sm">
+        <img src="<%= @product.image_url || 'default-image.jpg' %>" class="card-img-top img-fluid" alt="<%= @product.name %>">
+        <div class="card-body">
+          <h5 class="card-title"><%= @product.name %></h5>
+          <p class="card-text">Prix actuel : <%= number_to_currency(@product.current_price) %></p>
+        </div>
+      </div>
+    </div>
+
+    <!-- Colonne pour le formulaire d'enchère -->
+    <div class="col-md-6">
+      <div class="card border-success mb-4 shadow-sm">
+        <div class="card-body">
+          <%= form_with model: [@product, @bid], url: product_bids_path(@product), method: :post, class: 'mb-4' do |f| %>
+            <div class="form-group mb-4">
+              <%= f.label :amount, "Montant de votre enchère", class: 'form-label' %>
+              <%= f.number_field :amount, step: 1, min: @product.current_price + 0.00, required: true, class: "form-control" %>
+            </div>
+            <%= f.submit "Placer une enchère", class: "btn btn-success btn-lg btn-block" %>
+          <% end %>
+        </div>
+      </div>
+
+      <!-- Lien retour -->
+      <%= link_to 'Retour aux produits', products_path, class: 'btn btn-outline-secondary btn-lg btn-block' %>
+    </div>
+  </div>
+</div>

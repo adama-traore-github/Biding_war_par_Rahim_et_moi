@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Paiement Stripe pour <%= @product.name %></title>
+  <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/5.3.3/css/bootstrap.min.css">
+</head>
+<body>
+  <div class="container mt-4">
+    <h1>Paiement pour <%= @product.name %></h1>
+
+    
+
+    <!-- Formulaire Stripe -->
+    <form action="<%= payments_path %>" method="POST" id="payment-form">
+      <%= hidden_field_tag :amount, (@product.current_price * 100).to_i %> <!-- Montant en cents -->
+      <%= hidden_field_tag :product_id, @product.id %>
+
+      <script
+        src="https://checkout.stripe.com/checkout.js"
+        class="stripe-button"
+        data-key="<%= Rails.application.credentials.dig(:stripe, :publishable_key) %>"
+        data-amount="<%= (@product.current_price * 100).to_i %>"
+        data-name="Paiement pour <%= @product.name %>"
+        data-description="Paiement sécurisé pour le produit <%= @product.name %>"
+        data-currency="eur"
+        data-label="Payer maintenant">
+      </script>
+    </form>
+  </div>
+
+  <script src="https://stackpath.bootstrapcdn.com/bootstrap/5.3.3/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>

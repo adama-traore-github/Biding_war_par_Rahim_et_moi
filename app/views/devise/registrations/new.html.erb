@@ -1,0 +1,209 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Inscription - BidingWar</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <%= csrf_meta_tags %>
+  <%= csp_meta_tag %>
+  <%= stylesheet_link_tag 'application', media: 'all', 'data-turbolinks-track': 'reload' %>
+  <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
+  <style>
+    .container {
+      margin-top: 50px;
+    }
+    .card {
+      border-radius: 0.5rem;
+      overflow: hidden;
+    }
+    .row.no-gutters {
+      margin: 0;
+    }
+    .card-img-left {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      border-right: 1px solid #dee2e6;
+    }
+    .card-body {
+      padding: 0; /* Enlever le padding pour que l'image prenne toute la place */
+    }
+    .card-description {
+      background-color: #1de9b6; 
+      height: 100%;
+      display: flex;
+      flex-direction: column;
+      position: relative;
+      overflow: hidden;
+    }
+    .sticker {
+      width: 100%;
+      height: 50%;
+      object-fit: cover;
+    }
+    .text-content {
+      padding: 1rem; /* Réduit le padding pour la description */
+      background-color: rgba(255, 255, 255, 0.9); /* Fond blanc avec transparence pour le texte */
+      position: absolute;
+      top: 50%;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      z-index: 1; /* Texte au-dessus de l'image */
+      overflow-y: auto; /* Ajoute un défilement si le texte dépasse */
+      opacity: 0; /* Initialement caché */
+      animation: fadeIn 1s ease-out forwards; /* Animation de fade-in */
+    }
+    @keyframes fadeIn {
+      from {
+        opacity: 0;
+        transform: translateY(20px);
+      }
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+    .card-form {
+      padding-left: 20px; /* Marge à gauche dans la partie inscription */
+    }
+    .animated-title {
+      font-size: 1.5rem; /* Réduit la taille de la police */
+      font-weight: bold;
+      color: #ff6347;
+      transition: all 0.3s ease;
+    }
+    .animated-title:hover {
+      color: #ffa07a;
+      transform: scale(1.05);
+      text-shadow: 4px 4px 6px rgba(0,0,0,0.2);
+    }
+    .error {
+      color: red;
+      font-size: 0.875rem;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <div class="row justify-content-center">
+      <!-- Card Divisée -->
+      <div class="col-md-8">
+        <div class="card">
+          <div class="row no-gutters">
+            <!-- Partie Description -->
+            <div class="col-md-6">
+              <div class="card-body card-description">
+                <!-- Sticker pour le logo -->
+                <img src="<%= asset_path 'Sans titre100.jpeg' %>" alt="Sticker" class="sticker">
+                <div class="text-content">
+                  <h3 class="animated-title">Bienvenue sur BidingWar</h3>
+                  <p>
+                    BidingWar est la plateforme ultime pour les enchères en ligne. Ici, vous pouvez participer à des enchères passionnantes sur une variété de produits. Que vous soyez un acheteur cherchant des offres incroyables ou un vendeur souhaitant atteindre un large public, BidingWar est le lieu idéal pour vous.
+                  </p>
+                </div>
+              </div>
+            </div>
+            <!-- Partie Formulaire d'Inscription -->
+            <div class="col-md-6">
+              <div class="card-body card-form">
+                <h2 class="text-center">Inscription</h2>
+                <%= form_for(resource, as: resource_name, url: registration_path(resource_name), html: { id: 'registration-form', class: 'form-signup' }) do |f| %>
+                  <%= devise_error_messages! %>
+
+                  <div class="form-group">
+                    <%= f.label :name, class: 'form-label' %>
+                    <%= f.text_field :name, autofocus: true, class: 'form-control' %>
+                    <div class="error" id="name-error"></div>
+                  </div>
+
+                  <div class="form-group">
+                    <%= f.label :email, class: 'form-label' %>
+                    <%= f.email_field :email, class: 'form-control' %>
+                    <div class="error" id="email-error"></div>
+                  </div>
+
+                  <div class="form-group">
+                    <%= f.label :password, class: 'form-label' %>
+                    <%= f.password_field :password, autocomplete: "new-password", class: 'form-control' %>
+                    <div class="error" id="password-error"></div>
+                  </div>
+
+                  <div class="form-group">
+                    <%= f.label :password_confirmation, class: 'form-label' %>
+                    <%= f.password_field :password_confirmation, autocomplete: "new-password", class: 'form-control' %>
+                    <div class="error" id="password-confirmation-error"></div>
+                  </div>
+
+                  <div class="form-group">
+                    <%= f.label :role, class: 'form-label' %>
+                    <%= f.select :role, User.roles.keys.map { |role| [role.humanize, role] }, { class: 'form-control' } %>
+                    <div class="error" id="role-error"></div>
+                  </div>
+
+                  <div class="form-group text-center">
+                    <%= f.submit "S'inscrire", class: 'btn btn-primary' %>
+                  </div>
+                <% end %>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.9.3/dist/umd/popper.min.js"></script>
+  <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+  <script>
+    document.addEventListener('DOMContentLoaded', function() {
+      const form = document.getElementById('registration-form');
+      const nameField = document.querySelector('input[name="user[name]"]');
+      const emailField = document.querySelector('input[name="user[email]"]');
+      const passwordField = document.querySelector('input[name="user[password]"]');
+      const passwordConfirmationField = document.querySelector('input[name="user[password_confirmation]"]');
+      const roleField = document.querySelector('select[name="user[role]"]');
+
+      form.addEventListener('submit', function(event) {
+        let valid = true;
+
+        // Clear previous errors
+        document.querySelectorAll('.error').forEach(error => error.textContent = '');
+
+        // Validation
+        if (nameField.value.trim() === '') {
+          document.getElementById('name-error').textContent = 'Le nom est requis.';
+          valid = false;
+        }
+
+        if (emailField.value.trim() === '') {
+          document.getElementById('email-error').textContent = 'L\'email est requis.';
+          valid = false;
+        }
+
+        if (passwordField.value.trim() === '') {
+          document.getElementById('password-error').textContent = 'Le mot de passe est requis.';
+          valid = false;
+        }
+
+        if (passwordConfirmationField.value.trim() === '') {
+          document.getElementById('password-confirmation-error').textContent = 'La confirmation du mot de passe est requise.';
+          valid = false;
+        } else if (passwordField.value !== passwordConfirmationField.value) {
+          document.getElementById('password-confirmation-error').textContent = 'Les mots de passe ne correspondent pas.';
+          valid = false;
+        }
+
+        if (roleField.value.trim() === '') {
+          document.getElementById('role-error').textContent = 'Le rôle est requis.';
+          valid = false;
+        }
+
+        if (!valid) {
+          event.preventDefault(); // Empêche la soumission du formulaire si la validation échoue
+        }
+      });
+    });
+  </script>
+</body>
+</html>
