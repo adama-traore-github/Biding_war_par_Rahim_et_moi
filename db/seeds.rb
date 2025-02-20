@@ -73,4 +73,23 @@ Product.find_or_create_by!(name: 'Produit Beauté') do |product|
   product.seller = seller
   product.description = 'Un produit de beauté exceptionnel pour améliorer votre apparence.'
   product.image.attach(io: File.open(beauty_image_path), filename: 'beauty_product_image.jpeg')
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
 end
