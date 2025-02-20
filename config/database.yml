@@ -24,7 +24,7 @@ default: &default
 development:
   <<: *default
   database: Biding_war_development
-  username: postgres
+  username: nostra
   password: nostra
 
  
@@ -62,7 +62,7 @@ development:
 test:
   <<: *default
   database: Biding_war_test
-  username: postgres
+  username: nostra
   password: nostra
 
  
@@ -90,6 +90,6 @@ test:
 production:
   <<: *default
   database: Biding_war_production
-  username: postgres
+  username: nostra
   password: nostra
  
